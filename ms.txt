@@ -1,0 +1,1 @@
+echo sn > /sys/class/android_usb/android0/iSerial

@@ -1,0 +1,102 @@
+
+登陆mysql：
+mysql -h 主机名 -u 用户名 -p
+	
+    -h : 该命令用于指定客户端所要登录的MySQL主机名, 登录当前机器该参数可以省略;
+    -u : 所要登录的用户名;
+    -p : 告诉服务器将会使用一个密码来登录, 如果所要登录的用户名密码为空, 可以忽略此选项。
+
+mysql -u root -p
+
+创建一个数据库
+	使用 create database 语句可完成对数据库的创建, 创建命令的格式如下:
+	create database 数据库名 [其他选项];
+	例如我们需要创建一个名为 samp_db 的数据库, 在命令行下执行以下命令:
+	create database samp_db character set gbk;
+
+查看数据库：
+	show databases;
+
+使用数据库：
+	一: 在登录数据库时指定, 命令: mysql -D 所选择的数据库名 -h 主机名 -u 用户名 -p
+		例如登录时选择刚刚创建的数据库: mysql -D samp_db -u root -p
+	二: 在登录后使用 use 语句指定, 命令: use 数据库名;
+		use 语句可以不加分号, 执行 use samp_db 
+
+创建数据表：
+	一：命令行输入：
+	create table students
+		（
+			id int unsigned not null auto_increment primary key,
+			name char(8) not null,
+			sex char(4) not null,
+			age tinyint unsigned not null,
+			tel char(13) null default "-"
+		);
+
+	二：输入: mysql -D samp_db -u root -p < createtable.sql（完整路径）
+		(提示: 1.如果连接远程主机请加上 -h 指令; 2. createtable.sql 文件若不在当前工作目录下需指定文件的完整路径。)
+
+		drop table if exists sequence;     
+		create table sequence (         
+		seq_name        VARCHAR(50) NOT NULL, -- 序列名称         
+		current_val     INT         NOT NULL, -- 当前值         
+		increment_val   INT         NOT NULL    DEFAULT 1, -- 步长(跨度)         
+		PRIMARY KEY (seq_name)   );  
+
+提示: 
+	1. 使用 show tables; 命令可查看已创建了表的名称; 
+	2. 使用 describe 表名; 命令可查看已创建的表的详细信息。
+	
+	向表中插入数据：
+		insert into students values(NULL, "王刚", "男", 20, "13811371377");
+		或
+		insert into students (name, sex, age) values("孙丽华", "女", 21);
+	查询表中的数据：
+		select 列名称 from 表名称 [查询条件];
+	按特定条件查询:
+		select * from students where age > 21;
+		select * from students where name like "%王%";
+		select * from students where id<5 and age>20;
+	更新表中的数据：
+		update students set name="张伟鹏", age=19 where tel="13288097888";
+		将所有人的年龄增加1: update students set age=age+1;
+
+	删除表中的数据：
+		delete from 表名称 where 删除条件;
+		删除表中的所有数据: delete from students;
+
+创建后表的修改
+
+添加列
+	基本形式: alter table 表名 add 列名 列数据类型 [after 插入位置];
+	示例:
+	在表的最后追加列 address: alter table students add address char(60);
+	在名为 age 的列后插入列 birthday: alter table students add birthday date after age;
+修改列
+	基本形式: alter table 表名 change 列名称 列新名称 新数据类型;
+	示例:
+	将表 tel 列改名为 telphone: alter table students change tel telphone char(13) default "-";
+	将 name 列的数据类型改为 char(16): alter table students change name name char(16) not null;
+删除列
+	基本形式: alter table 表名 drop 列名称;
+	示例:
+	删除 birthday 列: alter table students drop birthday;
+重命名表
+	基本形式: alter table 表名 rename 新表名;
+	示例:
+	重命名 students 表为 workmates: alter table students rename workmates;
+删除整张表
+	基本形式: drop table 表名;
+	示例: 删除 workmates 表: drop table workmates;
+删除整个数据库
+	基本形式: drop database 数据库名;
+	示例: 删除 samp_db 数据库: drop database samp_db;
+
+ 
+附录
+修改 root 用户密码
+按照本文的安装方式, root 用户默认是没有密码的, 重设 root 密码的方式也较多, 这里仅介绍一种较常用的方式。
+使用 mysqladmin 方式:
+打开命令提示符界面, 执行命令: mysqladmin -u root -p password 新密码
+执行后提示输入旧密码完成密码修改, 当旧密码为空时直接按回车键确认即可。

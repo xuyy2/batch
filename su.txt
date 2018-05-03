@@ -1,0 +1,2 @@
+﻿rm -r /data/data/com.android.launcher3
+reboot
